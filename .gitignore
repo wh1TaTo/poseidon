@@ -186,3 +186,6 @@ ckpt/
 *.pth
 *.pt
 *.pkl
+
+# Models
+models/
