@@ -202,6 +202,16 @@ class CompressibleBase(BaseTimeDataset):
         data_path = self.data_path + file_path
         data_path = self._move_to_local_scratch(data_path)
         self.reader = h5py.File(data_path, "r")
+        
+        # Auto-detect actual dataset size and adjust if needed
+        actual_size = self.reader["data"].shape[0]
+        if actual_size < self.N_max:
+            self.N_max = actual_size
+            # Adjust N_val and N_test proportionally, but ensure at least some test samples
+            if self.N_max < self.N_val + self.N_test:
+                # If not enough samples, use a smaller split
+                self.N_test = min(self.N_test, max(1, self.N_max // 3))
+                self.N_val = min(self.N_val, max(1, (self.N_max - self.N_test) // 2))
 
         self.constants = copy.deepcopy(CONSTANTS)
 

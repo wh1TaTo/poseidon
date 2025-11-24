@@ -499,16 +499,19 @@ if __name__ == "__main__":
         trainer = get_trainer(params.model_path, params.batch_size, dataset)
         inputs = get_first_n_inputs(dataset, params.save_n_samples)
         outputs, labels, _ = rollout(trainer, dataset, ar_steps=params.ar_steps)
+        output_dir = params.file + "/" + params.dataset.replace(".", "-")
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
         np.save(
-            params.file + "/" + params.dataset.replace(".", "-") + "/" + "inputs.npy",
+            output_dir + "/" + "inputs.npy",
             inputs.cpu().numpy(),
         )
         np.save(
-            params.file + "/" + params.dataset.replace(".", "-") + "/" + "labels.npy",
+            output_dir + "/" + "labels.npy",
             labels[: params.save_n_samples],
         )
         np.save(
-            params.file + "/" + params.dataset.replace(".", "-") + "/" + "outputs.npy",
+            output_dir + "/" + "outputs.npy",
             outputs[: params.save_n_samples],
         )
     elif params.mode == "save_samples_sweep":
